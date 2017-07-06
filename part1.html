@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>part1</title>
+<!-- 2017-07-06 Thu 02:05 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Earl Kent" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">part1</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Common Lisp &#x2013; MOP Tutorial (Part 1)</a>
+<ul>
+<li><a href="#sec-1-1">1.1. Introspective vs Intercessory</a></li>
+<li><a href="#sec-1-2">1.2. Google: Common Lisp "MOP" how to list the properties of a an object</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Common Lisp &#x2013; MOP Tutorial (Part 1)</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+I've been fascinated by Common Lisp's Metaobject protocol (MOP) for
+a long time.  The Art of the Metaobject Protocol is one of the
+classics in Computer Science.  Precise, lucid, concise &#x2013; every time
+I read a chapter from it I find myself getting excited as my mind is
+flooded by a deluge of ideas I could apply it too.  Yet when I sit
+down at the keyboard and start in on my hilariously ambitious
+project say, a Lisp implementation of the
+<a href="https://processing.org">Processing</a> programming environment, my
+mind draws a complete blank with respect to MOP.  I struggle to get
+even the most basic things working, often finding myself spending
+hours word of effort on something only to realize that, say, the
+object behavior that I was trying create required me to perform the
+operation on the metaclass not the instantiated object.
+</p>
+
+<p>
+One reason for that is the nature of the book itself: it basically
+starts from the ground up using MOP to develop an object system (a
+miniature version of CLOS).  One of the more complex uses you could
+put it to, and one that's not particularly likely to resemble any
+project you're likely to implement using MOP, especially not
+initially.  In addition, like many things in Lisp, it uses a
+specialized, highly abstract vocabulary, to describe concepts which
+are called something completely else in other programming languages.
+Finally, documentation on MOP, except for those two famous chapters
+from the book is sparse and often extremely dated.  And due to its
+arcane nature even basic Google is likely to come up with limmited
+results.
+</p>
+
+<p>
+At least to the last issue I'm hoping this series of posts will help
+by adding an extra line or two to the couple of pages of returned
+by Google to searches like: 
+</p>
+
+<p>
+Common Lisp "MOP"
+how do you list the properties of an object
+</p>
+</div>
+
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Introspective vs Intercessory</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+The Art of the Metaobject Protocol divides the API into methods of
+two broad types: introspective and intercessory, i.e. ways to query
+the object system about itself and ways to hook into the system to
+change its existing behavior or extend its functionality.  The
+presentational strategy of the book were nessessarily (because it
+was describing the creation of an object system using the
+primitives MOP provides) bottom up.  In these set of blog posts
+I'll proceed from the top down, hopefully allowing the reader to
+get familiar with some of the speciallized terms while using a
+few high-level easy-to-understand features before moving on to
+manipulating the deeper machinery.  This post will be entirely
+focused on the introspective aspects of MOP.
+</p>
+
+
+<p>
+In all the examples I go through, I'll be using SBCL's built-in
+MOP.  Most modern Lisp systems have a complete MOP system built in
+as well.  In addition there are several packages that wrap popular
+Lisp systems' MOP implementation in a way that facilitates cross
+platform use.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Google: Common Lisp "MOP" how to list the properties of a an object</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+In Lisp's object system, CLOS, all language constructs are objects,
+even nil, and therefor it is valid to apply the function <code>class-of</code>
+to them.  In a language like C++ or or Java, you can think of
+objects 'owning' their properties and methods.  In Javascript that
+concept is even stronger.  In CLOS, however methods are quite
+distinct from either objects or classes.  Methods are most tightly
+coupled with a CLOS concept called a generic-function, and only
+indirectly related to the objects which it takse as arguments.
+CLOS slots correspond more closely to our intuitive (conditioned by
+popular contemporary programming languages) notions of properties.
+But even here, it's important to keep in mind that slots (really
+slot definitions) under MOP are stand-alone objects independent of
+classes or objects.
+</p>
+
+<p>
+Fortunately, classes maintain a list of their direct slots (in this
+post I'll restrict myself to only talking about direct slots and
+methods, i.e. we'll ignore aspects of MOP involving super-classes),
+so retrieving a list of (direct) slots of an object is just a two
+step process:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-lisp">(<span style="color: #ffffff;">defclass</span> <span style="color: #7fffd4;">point</span> ()
+  ((x <span style="color: #b0c4de;">:initarg</span> <span style="color: #b0c4de;">:x</span> <span style="color: #b0c4de;">:accessor</span> x <span style="color: #b0c4de;">:initform</span> 0)
+   (y <span style="color: #b0c4de;">:initarg</span> <span style="color: #b0c4de;">:y</span> <span style="color: #b0c4de;">:accessor</span> y <span style="color: #b0c4de;">:initform</span> 0)))
+
+(<span style="color: #ffffff;">defparameter</span> <span style="color: #9acd32;">*point*</span> (make-instance 'point))
+
+(<span style="color: #ffffff;">let</span> (result)
+  (<span style="color: #ffffff;">let</span> (result)
+    (<span style="color: #ffffff;">dolist</span> (slot
+              (sb-mop:class-direct-slots (class-of *point*))   
+             result)    
+      (push slot result))))
+</pre>
+</div>
+
+<p>
+The meaning of this should be pretty clear.
+<code>sb-mop:class-direct-slots</code> is a function that takes a class
+argument (not the name of class, classes can be anonymous) and
+returns a list of the class' direct slot definitions.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-lisp">(#&lt;SB-MOP:STANDARD-DIRECT-SLOT-DEFINITION COMMON-LISP-USER::Y&gt;
+ #&lt;SB-MOP:STANDARD-DIRECT-SLOT-DEFINITION COMMON-LISP-USER::X&gt;)
+</pre>
+</div>
+
+<p>
+To improve readability, however, and excercise some additional
+machinery of MOP let's make that a list of slot names, using
+<code>sb-mop:slot-definition-name</code> (though keep in mind that slots too,
+can be anonymous)
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-lisp">(<span style="color: #ffffff;">let</span> (result)
+  (<span style="color: #ffffff;">dolist</span> (slot (sb-mop:class-direct-slots (class-of *point*)) 
+           result)
+    (push (sb-mop:slot-definition-name slot) result)))<span style="color: #ff8c69;">&lt;/pre&gt;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre class="src src-lisp">(Y X)
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Earl Kent</p>
+<p class="date">Created: 2017-07-06 Thu 02:05</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.1.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

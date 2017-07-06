@@ -1,0 +1,163 @@
+
+
+* Common Lisp -- MOP Tutorial (Part 1)
+
+  I've been fascinated by Common Lisp's Metaobject protocol (MOP) for
+  a long time.  The Art of the Metaobject Protocol is one of the
+  classics in Computer Science.  Precise, lucid, concise -- every time
+  I read a chapter from it I find myself getting excited as my mind is
+  flooded by a deluge of ideas I could apply it too.  Yet when I sit
+  down at the keyboard and start in on my hilariously ambitious
+  project say, a Lisp implementation of the
+  [Processing](https://processing.org) programming environment, my
+  mind draws a complete blank with respect to MOP.  I struggle to get
+  even the most basic things working, often finding myself spending
+  hours word of effort on something only to realize that, say, the
+  object behavior that I was trying create required me to perform the
+  operation on the metaclass not the instantiated object.
+
+  One reason for that is the nature of the book itself: it basically
+  starts from the ground up using MOP to develop an object system (a
+  miniature version of CLOS).  One of the more complex uses you could
+  put it to, and one that's not particularly likely to resemble any
+  project you're likely to implement using MOP, especially not
+  initially.  In addition, like many things in Lisp, it uses a
+  specialized, highly abstract vocabulary, to describe concepts which
+  are called something completely else in other programming languages.
+  Finally, documentation on MOP, except for those two famous chapters
+  from the book is sparse and often extremely dated.  And due to its
+  arcane nature even basic Google is likely to come up with limmited
+  results.
+
+  At least to the last issue I'm hoping this series of posts will help
+  by adding an extra line or two to the couple of pages of returned
+  by Google to searches like: 
+
+  Common Lisp "MOP"
+  how do you list the properties of an object
+
+** Introspective vs Intercessory
+
+   The Art of the Metaobject Protocol divides the API into methods of
+   two broad types: introspective and intercessory, i.e. ways to query
+   the object system about itself and ways to hook into the system to
+   change its existing behavior or extend its functionality.  The
+   presentational strategy of the book were nessessarily (because it
+   was describing the creation of an object system using the
+   primitives MOP provides) bottom up.  In these set of blog posts
+   I'll proceed from the top down, hopefully allowing the reader to
+   get familiar with some of the speciallized terms while using a
+   few high-level easy-to-understand features before moving on to
+   manipulating the deeper machinery.  This post will be entirely
+   focused on the introspective aspects of MOP.
+
+
+   In all the examples I go through, I'll be using SBCL's built-in
+   MOP.  Most modern Lisp systems have a complete MOP system built in
+   as well.  In addition there are several packages that wrap popular
+   Lisp systems' MOP implementation in a way that facilitates cross
+   platform use.
+
+
+** ~Google: Common Lisp "MOP" how to list the properties of a an object~
+
+   In Lisp's object system, CLOS, all language constructs are objects,
+   even nil, and therefor it is valid to apply the function ~class-of~
+   to them.  In a language like C++ or or Java, you can think of
+   objects 'owning' their properties and methods.  In Javascript that
+   concept is even stronger.  In CLOS, however methods are quite
+   distinct from either objects or classes.  Methods are most tightly
+   coupled with a CLOS concept called a generic-function, and only
+   indirectly related to the objects which it takse as arguments.
+   CLOS slots correspond more closely to our intuitive (conditioned by
+   popular contemporary programming languages) notions of properties.
+   But even here, it's important to keep in mind that slots (really
+   slot definitions) under MOP are stand-alone objects independent of
+   classes or objects.
+
+   Fortunately, classes maintain a list of their direct slots (in this
+   post I'll restrict myself to only talking about direct slots and
+   methods, i.e. we'll ignore aspects of MOP involving super-classes),
+   so retrieving a list of (direct) slots of an object is just a two
+   step process:
+
+   #+BEGIN_SRC lisp  :tangle class-direct-slots.lisp
+     (defclass point ()
+       ((x :initarg :x :accessor x :initform 0)
+        (y :initarg :y :accessor y :initform 0)))
+
+     (defparameter *point* (make-instance 'point))
+
+     (let (result)
+       (let (result)
+         (dolist (slot
+                   (sb-mop:class-direct-slots (class-of *point*))   
+                  result)    
+           (push slot result))))
+   #+END_SRC
+
+   The meaning of this should be pretty clear.
+   ~sb-mop:class-direct-slots~ is a function that takes a class
+   argument (not the name of class, classes can be anonymous) and
+   returns a list of the class' direct slot definitions.
+
+   #+BEGIN_SRC lisp  
+     (#<SB-MOP:STANDARD-DIRECT-SLOT-DEFINITION COMMON-LISP-USER::Y>
+      #<SB-MOP:STANDARD-DIRECT-SLOT-DEFINITION COMMON-LISP-USER::X>)
+   #+END_SRC
+
+   To improve readability, however, and excercise some additional
+   machinery of MOP let's make that a list of slot names, using
+   ~sb-mop:slot-definition-name~ (though keep in mind that slots too,
+   can be anonymous)
+
+   #+BEGIN_SRC lisp  
+     (let (result)
+       (dolist (slot (sb-mop:class-direct-slots (class-of *point*)) 
+                result)
+         (push (sb-mop:slot-definition-name slot) result)))</pre>
+   #+END_SRC
+
+   #+BEGIN_SRC lisp  
+     (Y X)
+   #+END_SRC
+
+** ~Google: Common Lisp "MOP" how to list the methods of a an object~
+
+   Methods in CLOS are concieved of somewhat differently in most
+   contemporary object oriented languages.  In some respects they take
+   the center stage, rather than objects -- Norvig, in another classic
+   Lisp book from about the time of The Art of the Metaobject
+   Protocol, Paradigms of Artificial Inteligence programming (PAIP),
+   devotes a section of his object oriented chapter asking the
+   question: Is Close Object Oriented?  One of the set of answers he
+   writes in response to the question is that: "CLOS is moregeneral
+   than an object-oriented system because it allows for methods that
+   specialize on more than one argument.
+
+   #+BEGIN_QUOTE
+     CLOS is moregeneral than an object-oriented system because it
+     allows for methods that specialize on more than one argument. In
+     true object-oriented systems, methods are associated with objects
+     of a particular class. This association is lexically obvious (and
+     the message-passing metaphor is clear) when we write the methods
+     inside the definition of the class, as in our define-class
+     macro. The message-passing metaphor is still apparent when we
+     write generic functions that dispatch on the class of their first
+     argument, which is how we've been using CLOS so far.
+
+     But CLOS methods can dispatch on the class of any required
+     argument, or any combination of them. Consider the following
+     definition of conc, which is like append except that it works for
+     vectors as well as lists. Rather than writing conc using
+     conditional statements, we can use the multimethod dispatch
+     capabilities of CLOS to define the four cases: (1) the first
+     argument is nil, (2) the second argument is nil, (3) both
+     arguments are lists, and (4) both arguments are vectors. Notice
+     that if one of the arguments is nil there will be two applicable
+     methods, but the method for nu1 1 will be used because the class
+     nu1 1 is more specific than the class 1ist.
+   #+END_QUOTE
+
+   The reason for that generality is that methods of the same name are
+   part of an entity called a generic-funtion
