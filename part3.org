@@ -1,0 +1,131 @@
+
+
+* Common Lisp -- MOP Tutorial (Part 3)
+
+** programatically constructing CLOS meta-objects
+
+   So, far we've limited ourselves to a few functions that query
+   basic information about CLOS meta-objects, essentially providing
+   syntactic sugar to existing MOP methods.  We'll now pursue that
+   same method but with respects to MOP operations that creat CLOS
+   meta-objects. In particular will create a convenience function for
+   adding slots to an existing, slot-less class.
+
+** Faceted Classification System
+   A simple way to think of a faceted classification system is as a
+   system for currating keywords, i.e. you have a set (perhaps very
+   large) of items that you want to tag and provide a way to manage
+   all the tag terms you've created as well as locate items by their
+   tags quickly.
+
+   One example of a faceted classification system is debtags, a part
+   of apt used to classify software packages.  For our purposes we'll
+   use a conventional example: dishwashing detergent.  If we were
+   looking for dishwashing detergent in the supermarket we would have
+   an intuitive idea of what we wanted: dishwashing machine vs. hand
+   washing liquid, powdered vs brickette, unsented vs. scented.  Each
+   of these pairs would be a way of thinking about dishwashing
+   detergent and each pair might be part of a larger set,
+   i.e. powdered vs brickette might be part of a set that also
+   includes liquid. 
+
+   We'll take the design of our fasceted classification system as a
+   given. What we'll be interested in doing is to create a general way
+   to represent any arbitrary system as a set of CLOS classes that can
+   be updated as our system grows (i.e. is currated).
+
+** Classes
+   A faceted classification system consists of three classes: facets,
+   terms and items.  Refering back to the dishwashing detergent
+   analogy: instances of facets might be form, brand name, agent,
+   effect-on-agent (e.g. aroma therapy), scent, special-property
+   (e.g. anti-bacterial)
+   
+   Each facet would have a slot called terms, representing all the
+   terms associated with that facet.
+
+   #+BEGIN_SRC lisp  :tangle class-direct-slots.lisp
+     (defclass facet ()
+       ((name :initarg :name :accessor :name :initform "")
+        (terms :initarg :terms :accessor :terms :initform '())))
+   #+END_SRC
+
+   A new facet for our dishwashing detergent example might look like
+   this: 
+
+   #+BEGIN_SRC lisp  :tangle class-direct-slots.lisp
+     (defparameter my-facet
+       (make-instance 'facet :name :agent :terms '(:dishwasher :person)))
+   #+END_SRC
+
+   So, at this point we'd like to classifying items.
+
+   #+BEGIN_SRC lisp  :tangle class-direct-slots.lisp
+     (defclass item ()
+       ((name :initarg :name :accessor :name :initform "")
+        (terms :initarg :terms :accessor :terms :initform '())))
+   #+END_SRC
+   
+   In Lisp's object system, CLOS, all language constructs are objects,
+   even nil, and therefor it is valid to apply the function ~class-of~
+   to them.  In a language like C++ or or Java, you can think of
+   objects 'owning' their properties and methods.  In Javascript that
+   concept is even stronger.  In CLOS, however methods are quite
+   distinct from either objects or classes.  Methods are most tightly
+   coupled with a CLOS concept called a generic-function, and only
+   indirectly related to the objects which it takse as arguments.
+   CLOS slots correspond more closely to our intuitive (conditioned by
+   popular contemporary programming languages) notions of properties.
+   But even here, it's important to keep in mind that slots (really
+   slot definitions) under MOP are stand-alone objects independent of
+   classes or objects.
+
+   Fortunately, classes maintain a list of their direct slots (in this
+   post I'll restrict myself to only talking about direct slots and
+   methods, i.e. we'll ignore aspects of MOP involving super-classes),
+   so retrieving a list of (direct) slots of an object is just a two
+   step process:
+
+   #+BEGIN_SRC lisp  :tangle class-direct-slots.lisp
+     (defclass point ()
+       ((x :initarg :x :accessor x :initform 0)
+        (y :initarg :y :accessor y :initform 0)))
+
+     (defparameter *point* (make-instance 'point))
+
+     (let (result)
+       (let (result)
+         (dolist (slot
+                   (sb-mop:class-direct-slots (class-of *point*))   
+                  result)    
+           (push slot result))))
+   #+END_SRC
+
+   The meaning of this should be pretty clear.
+   ~sb-mop:class-direct-slots~ is a function that takes a class
+   argument (not the name of class, classes can be anonymous) and
+   returns a list of the class' direct slot definitions.
+
+   #+BEGIN_SRC lisp  
+     (#<SB-MOP:STANDARD-DIRECT-SLOT-DEFINITION COMMON-LISP-USER::Y>
+      #<SB-MOP:STANDARD-DIRECT-SLOT-DEFINITION COMMON-LISP-USER::X>)
+   #+END_SRC
+
+   To improve readability, however, and excercise some additional
+   machinery of MOP let's make that a list of slot names, using
+   ~sb-mop:slot-definition-name~ (though keep in mind that slots too,
+   can be anonymous)
+
+   #+BEGIN_SRC lisp  
+     (let (result)
+       (dolist (slot (sb-mop:class-direct-slots (class-of *point*)) 
+                result)
+         (push (sb-mop:slot-definition-name slot) result)))</pre>
+   #+END_SRC
+
+   #+BEGIN_SRC lisp  
+     (Y X)
+   #+END_SRC
+
+
+
